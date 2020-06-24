@@ -6,6 +6,7 @@ import os
 
 q = input("Cardinality of the finite field (extensions are given by the element a): ")
 deg_seq = input("Sequence of coefficients: (e.g. x^2 + 2 would be [2, 0, 1])" )
+ffmpeg = input("Do you have ffmpeg installed? (True or False)")
  
 f = open("gif_maker.sage", "w+")
 f.write("import os                                                                          \n")
@@ -13,8 +14,8 @@ f.write("from sage.plot.colors import rainbow                                   
 ##f.write("import functions                                                                 \n")
 f.write("from functions import graphField, plotGraph, rightEdges, dynamics, makeimages, p   \n")
 
-f.write(f"K.<a> = GF(%s,'a') \n" %(q))
-f.write(f"f = p(%s)          \n" %(deg_seq))
+f.write("K.<a> = GF(%s,'a') \n" % q)
+f.write("f = p(%s)          \n" % deg_seq)
 f.write("elements = [x for x in K]                            \n")
 f.write("vs = graphField(K).vertices()                        \n")
 f.write("newelements = []                                     \n")
@@ -29,8 +30,10 @@ f.write("qs = []                                              \n")
 f.write("for c in newelements:                                \n")
 f.write("   qs += 8*[makeimages(K,f,c,figuresize=(7,7))[-1]]  \n")
 f.write("anim = animate(qs)                                   \n")
-f.write(f"anim.save(filename=\"gifs/%s_%s\")                  \n" %(deg_seq, q))
-f.write(f"anim.ffmpeg(savefile=\"gifs/%s_%s.mpg\")            \n" %(deg_seq, q))
+if not ffmpeg:
+    f.write("anim.save(filename=\"gifs/%s_%d.gif\")                  \n" % (deg_seq, q))
+elif ffmpeg:
+    f.write("anim.ffmpeg(savefile=\"gifs/%s_%d.gif\")            \n" % (deg_seq, q))
 f.close()
 os.system("sage --preparse gif_maker.sage")
 os.system("mv gif_maker.sage.py gif_maker.py")
